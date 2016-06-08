@@ -2,6 +2,13 @@
     <string name="app_name">CrossBid</string>
     <string name="title_activity_login">" Login"</string>
 
+    <!-- Strings related to menu -->
+    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
+
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
     <!-- Strings related to login -->
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
@@ -11,7 +18,19 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+
+    <!-- navigation drawer item labels  -->
+    <string-array name="nav_drawer_labels">
+        <item>@string/title_all_bid</item>
+        <item>@string/title_my_bid</item>
+        <item>@string/title_won_bid</item>
+    </string-array>
+
+    <string name="title_all_bid">All Bids</string>
+    <string name="title_my_bid">My Bids</string>
+    <string name="title_won_bid">Won Bids</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

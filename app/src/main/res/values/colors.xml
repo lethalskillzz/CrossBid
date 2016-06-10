@@ -6,4 +6,11 @@
     <color name="item_price">#55b948</color>
     <color name="item_bid">#5e6266</color>
     <color name="light_ash_background">#E2E2E2</color>
+
+    <color name="btn_green_normal">#02c754</color>
+    <color name="btn_green_pressed">#006633</color>
+
+    <color name="btn_blue_normal">#536DFE</color>
+    <color name="btn_blue_pressed">#304FFE</color>
+
 </resources>

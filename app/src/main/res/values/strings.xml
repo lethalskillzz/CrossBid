@@ -19,6 +19,8 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+    <string name="btn_bid">Bid</string>
+    <string name="btn_unbid">Unbid</string>
 
     <!-- navigation drawer item labels  -->
     <string-array name="nav_drawer_labels">
@@ -31,6 +33,4 @@
     <string name="title_my_bid">My Bids</string>
     <string name="title_won_bid">Won Bids</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-</resources>
+   </resources>

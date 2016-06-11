@@ -5,22 +5,23 @@ package com.crossover.crossbid.model;
  */
 public class BidItem {
 
-    private int id;
+    private int id, type;
     private byte[] image;
-    private String name;
-    private float price;
+    private String title, price, count;
     private boolean isBid;
 
     public BidItem() {
     }
 
-    public BidItem(int id, byte[] image, String name, float price, boolean isBid) {
+    public BidItem(int id, int type, byte[] image, String title, String price, String count, boolean isBid) {
 
         super();
         this.id = id;
+        this.type = type;
         this.image = image;
-        this.name = name;
+        this.title = title;
         this.price = price;
+        this.count = count;
         this.isBid = isBid;
     }
 
@@ -34,6 +35,11 @@ public class BidItem {
     }
 
 
+    public int getType() { return type; }
+
+    public void setType(int type) { this.type = type; }
+
+
     public byte[] getImage() {
         return image;
     }
@@ -43,21 +49,30 @@ public class BidItem {
     }
 
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
 
-    public float getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(String price) {
         this.price = price;
+    }
+
+
+    public String getCount() {
+        return count;
+    }
+
+    public void setCount(String count) {
+        this.count = count;
     }
 
 

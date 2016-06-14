@@ -98,7 +98,7 @@ public class BidAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             vh = new ProgressViewHolder(v);
         }else {
             View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_bid, parent, false);
+                    .inflate(R.layout.item_bid_row, parent, false);
 
             vh = new BidHolder(v, bidItems, viewType);
         }

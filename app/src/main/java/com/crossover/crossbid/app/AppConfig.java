@@ -11,20 +11,20 @@ public class AppConfig {
     public static final String DATABASE_NAME = "crossbid.db";
 
     public static  String USER_TABLE = "users";
-    public static  String id = "id";
-    public static  String username= "username";
-    public static  String password= "password";
+    public static  String ID = "id";
+    public static  String USERNAME= "username";
+    public static  String PASSWORD= "password";
 
     public static  String ITEM_TABLE = "items";
-    public static  String ownerId= "owner_id";
-    public static  String itemTitle= "item_name";
-    public static  String startingPrice= "starting_price";
-    public static  String itemImage= "item_image";
+    public static  String OWNER_ID= "owner_id";
+    public static  String ITEM_TITLE= "item_name";
+    public static  String STARTING_PRICE= "starting_price";
+    public static  String ITEM_IMAGE= "item_image";
 
     public static  String BID_TABLE = "bids";
-    public static  String bidderId= "bidder_id";
-    public static  String itemId= "item_id";
-    public static  String bidPrice= "bid_price";
+    public static  String BIDDER_ID= "bidder_id";
+    public static  String ITEM_ID= "item_id";
+    public static  String BID_PRICE= "bid_price";
 
     //RecyclerView Constants
     public static final int VIEW_BID_ALL = 3;

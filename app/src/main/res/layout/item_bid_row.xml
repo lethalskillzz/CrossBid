@@ -24,6 +24,7 @@
             android:layout_width="fill_parent"
             android:layout_height="185dp"
             android:scaleType="fitXY"
+            android:src="@mipmap/ic_image"
             tools:ignore="ContentDescription"/>
 
         <TextView

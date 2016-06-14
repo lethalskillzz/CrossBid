@@ -16,8 +16,6 @@ import android.widget.Toast;
 import com.crossover.crossbid.R;
 import com.crossover.crossbid.fragment.FragmentAllBid;
 import com.crossover.crossbid.fragment.FragmentDrawer;
-import com.crossover.crossbid.fragment.FragmentMyBid;
-import com.crossover.crossbid.fragment.FragmentWonBid;
 
 public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener {
 
@@ -43,10 +41,6 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
         // display the first navigation drawer view on app launch
         displayView(0);
-
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
     }
 
 
@@ -111,5 +105,10 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             // set the toolbar title
             getSupportActionBar().setTitle(title);
         }
+    }
+
+    public void goToNewBid(View v) {
+        Intent intent = new Intent(MainActivity.this, NewBidActivity.class);
+        startActivity(intent);
     }
 }

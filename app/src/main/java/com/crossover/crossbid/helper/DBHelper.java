@@ -22,19 +22,19 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(
                 "create table " + AppConfig.USER_TABLE +
-                        "("+AppConfig.id+" integer primary key, "+AppConfig.username+" text, "+AppConfig.password+" text)"
+                        "("+AppConfig.ID+" integer primary key, "+AppConfig.USERNAME+" text, "+AppConfig.PASSWORD+" text)"
         );
 
         db.execSQL(
                 "create table " + AppConfig.ITEM_TABLE +
-                        "("+AppConfig.id+" integer primary key, "+AppConfig.ownerId+" integer, " +
-                        ""+AppConfig.itemTitle+" text, "+AppConfig.startingPrice+" float, "+AppConfig.itemImage+" blob)"
+                        "("+AppConfig.ID+" integer primary key, "+AppConfig.OWNER_ID+" integer, " +
+                        ""+AppConfig.ITEM_TITLE+" text, "+AppConfig.STARTING_PRICE+" float, "+AppConfig.ITEM_IMAGE+" blob)"
         );
 
         db.execSQL(
                 "create table " + AppConfig.BID_TABLE +
-                        "("+AppConfig.id+" integer primary key, "+AppConfig.bidderId+" integer, " +
-                        ""+AppConfig.itemId+" integer, "+AppConfig.bidPrice+" float)"
+                        "("+AppConfig.ID+" integer primary key, "+AppConfig.BIDDER_ID+" integer, " +
+                        ""+AppConfig.ITEM_ID+" integer, "+AppConfig.BID_PRICE+" float)"
         );
     }
 
@@ -58,9 +58,9 @@ public class DBHelper extends SQLiteOpenHelper {
     public void insertUser(String username, String password) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv=new ContentValues();
-        cv.put(AppConfig.username, username);
-        cv.put(AppConfig.password, password);
-        db.insert(AppConfig.USER_TABLE, AppConfig.username, cv);
+        cv.put(AppConfig.USERNAME, username);
+        cv.put(AppConfig.PASSWORD, password);
+        db.insert(AppConfig.USER_TABLE, AppConfig.USERNAME, cv);
         db.close(); // Closing database connection
     }
 
@@ -68,11 +68,11 @@ public class DBHelper extends SQLiteOpenHelper {
     public void insertItem(int ownerId, String itemName, float startingPrice, byte[] itemImage) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv=new ContentValues();
-        cv.put(AppConfig.ownerId, ownerId);
-        cv.put(AppConfig.itemTitle, itemName);
-        cv.put(AppConfig.startingPrice, startingPrice);
-        cv.put(AppConfig.itemImage, itemImage);
-        db.insert(AppConfig.ITEM_TABLE, AppConfig.ownerId, cv);
+        cv.put(AppConfig.OWNER_ID, ownerId);
+        cv.put(AppConfig.ITEM_TITLE, itemName);
+        cv.put(AppConfig.STARTING_PRICE, startingPrice);
+        cv.put(AppConfig.ITEM_IMAGE, itemImage);
+        db.insert(AppConfig.ITEM_TABLE, AppConfig.OWNER_ID, cv);
         db.close(); // Closing database connection
     }
 
@@ -80,10 +80,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public void insertBid(int bidderId, int  itemId, float bidPrice ) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv=new ContentValues();
-        cv.put(AppConfig.bidderId, bidderId);
-        cv.put(AppConfig.itemId, itemId);
-        cv.put(AppConfig.bidPrice, bidPrice);
-        db.insert(AppConfig.BID_TABLE, AppConfig.bidderId, cv);
+        cv.put(AppConfig.BIDDER_ID, bidderId);
+        cv.put(AppConfig.ITEM_ID, itemId);
+        cv.put(AppConfig.BID_PRICE, bidPrice);
+        db.insert(AppConfig.BID_TABLE, AppConfig.BIDDER_ID, cv);
         db.close(); // Closing database connection
     }
 
@@ -102,40 +102,99 @@ public class DBHelper extends SQLiteOpenHelper {
                 bidItems.setType(AppConfig.VIEW_BID_ALL);
                 bidItems.setTitle(cursor.getString(2));
                 bidItems.setIsBid(isBid(Integer.parseInt(cursor.getString(0)), my_Id));
-                bidItems.setPrice();
-                bidItems.setCount();
+
+                if (Float.parseFloat(cursor.getString(3)) >= bidPrice(Integer.parseInt(cursor.getString(0))))
+                    bidItems.setPrice(cursor.getString(3));
+                else
+                    bidItems.setPrice(String.valueOf(bidPrice(Integer.parseInt(cursor.getString(0)))));
+
+                bidItems.setCount(String.valueOf(bidCount(Integer.parseInt(cursor.getString(0)))) + " bids");
+
+                bidList.add(bidItems);
             } while (cursor.moveToNext());
         }
+        return bidList;
     }
 
 
-    // Getting Item
+    // Checking weather user bid on item
     private boolean isBid(int bid_id, int bidder_id) {
+        boolean isBid = false;
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + AppConfig.BID_TABLE;
         SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.query(AppConfig.BID_TABLE, new String[] { AppConfig.id },
-                AppConfig.bidderId + "=?", new String[] { String.valueOf(bidder_id) }, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
-
-        if(Integer.parseInt(cursor.getString(0)) == bid_id) {
-            return true;
-        } else
-            return false;
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and checking for match
+        if (cursor.moveToFirst()) {
+            do {
+                if(Integer.parseInt(cursor.getString(0)) == bid_id || Integer.parseInt(cursor.getString(1)) == bidder_id) {
+                    isBid = true;
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close(); // Closing database connection
+        return isBid;
     }
 
-    // Getting Item
-    private int bidCount(int bid_id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(AppConfig.BID_TABLE, new String[] { AppConfig.id },
-                AppConfig.bidderId + "=?", new String[] { String.valueOf(bid_id) }, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
 
-        if(Integer.parseInt(cursor.getString(0)) == bidder_Id) {
-            return true;
-        } else
-            return false;
+
+    // Getting total number of bids an item
+    private int bidCount(int bid_id) {
+        int count;
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + AppConfig.BID_TABLE + "WHERE " + AppConfig.ITEM_ID + " =" ;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(bid_id)});
+
+        count = cursor.getCount();
+        cursor.close(); // Closing database connection
+        // return count
+        return count;
+    }
+
+
+    // Getting the highest bid price on an item
+    private Float bidPrice(int bid_id) {
+        float price = 0;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(AppConfig.BID_TABLE, new String[] { AppConfig.BID_PRICE },
+                AppConfig.ID + "=?", new String[] { String.valueOf(bid_id) }, null, null, null, null);
+        if (cursor != null) {
+            // looping through all rows and checking for highest bid price
+            if (cursor.moveToFirst()) {
+                do {
+                    if(Float.parseFloat(cursor.getString(0)) >= price) {
+                        price = Float.parseFloat(cursor.getString(0));
+                    }
+                } while (cursor.moveToNext());
+            }
+        }
+        cursor.close(); // Closing database connection
+        // return highest price
+        return price;
+    }
+
+
+    //Fetch All Users from USER_TABLE
+    public String[] fetchAllUsers() {
+        int i = 0;
+        String[] allUsers = new String[i];
+
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + AppConfig.USER_TABLE;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and checking for match
+        if (cursor.moveToFirst()) {
+            do {
+                allUsers[i] = cursor.getString(0)+":"+cursor.getString(1)+":"+cursor.getString(2);
+                i++;
+            } while (cursor.moveToNext());
+
+        }
+        cursor.close(); // Closing database connection
+        return allUsers;
     }
 
 }

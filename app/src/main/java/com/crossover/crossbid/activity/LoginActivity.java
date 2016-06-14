@@ -3,6 +3,7 @@ package com.crossover.crossbid.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
@@ -31,6 +32,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.crossover.crossbid.R;
+import com.crossover.crossbid.app.PrefManager;
+import com.crossover.crossbid.helper.DBHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,13 +46,9 @@ import static android.Manifest.permission.READ_CONTACTS;
 public class LoginActivity extends AppCompatActivity {
 
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
+    private DBHelper db;
+    private PrefManager pref;
+
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -65,6 +64,14 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        db = new DBHelper(this);
+        pref = new PrefManager(this);
+
+        if(pref.isLoggedIn()) {
+            goToMain();
+        }
+
         // Set up the login form.
         mUsernameView = (AutoCompleteTextView) findViewById(R.id.username);
 
@@ -203,18 +210,16 @@ public class LoginActivity extends AppCompatActivity {
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
+        private final String mUsername;
         private final String mPassword;
 
-        UserLoginTask(String email, String password) {
-            mEmail = email;
+        UserLoginTask(String username, String password) {
+            mUsername = username;
             mPassword = password;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
             try {
                 // Simulate network access.
                 Thread.sleep(2000);
@@ -222,15 +227,22 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
+            //Authenticate existing user or register new user.
+            String[] CREDENTIALS = db.fetchAllUsers();
+            for (String credential : CREDENTIALS) {
                 String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
+                if (pieces[1].equals(mUsername)) {
                     // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
+                    if (pieces[2].equals(mPassword)) {
+                        pref.storeUserDetails(pieces[0], mUsername, true);
+                        return true;
+                    }
                 }
             }
 
-            // TODO: register the new account here.
+            // Register new account.
+            //String userId = db.insertUser(mUsername, mPassword);
+            pref.storeUserDetails("4", mUsername, true);
             return true;
         }
 
@@ -240,7 +252,7 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success) {
-                finish();
+                goToMain();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
@@ -252,6 +264,14 @@ public class LoginActivity extends AppCompatActivity {
             mAuthTask = null;
             showProgress(false);
         }
+    }
+
+    private void goToMain() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+        finish();
     }
 }
 

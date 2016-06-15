@@ -34,6 +34,7 @@ import android.widget.TextView;
 import com.crossover.crossbid.R;
 import com.crossover.crossbid.app.PrefManager;
 import com.crossover.crossbid.helper.DBHelper;
+import com.crossover.crossbid.util.Bot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -241,8 +242,8 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             // Register new account.
-            //String userId = db.insertUser(mUsername, mPassword);
-            pref.storeUserDetails("4", mUsername, true);
+            long userId = db.insertUser(mUsername, mPassword);
+            pref.storeUserDetails(String.valueOf(userId), mUsername, true);
             return true;
         }
 
@@ -252,6 +253,8 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success) {
+                Bot bot = new Bot(getApplicationContext());
+                bot.initBot();
                 goToMain();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

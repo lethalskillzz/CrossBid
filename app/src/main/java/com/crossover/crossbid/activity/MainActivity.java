@@ -11,18 +11,27 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crossover.crossbid.R;
+import com.crossover.crossbid.app.PrefManager;
 import com.crossover.crossbid.fragment.FragmentAllBid;
 import com.crossover.crossbid.fragment.FragmentDrawer;
+import com.crossover.crossbid.fragment.FragmentMyBid;
+import com.crossover.crossbid.fragment.FragmentWonBid;
+import com.crossover.crossbid.helper.DBHelper;
+import com.crossover.crossbid.util.Logout;
 
 public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener {
 
     private static String TAG = MainActivity.class.getSimpleName();
+    private PrefManager pref;
+    private Logout mLogout;
 
     private Toolbar mToolbar;
     private FragmentDrawer drawerFragment;
+    private TextView username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +43,17 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+
+        pref = new PrefManager(this);
+        mLogout = new Logout(this);
+
         drawerFragment = (FragmentDrawer)
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
         drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
         drawerFragment.setDrawerListener(this);
 
+        username = (TextView) findViewById(R.id.nav_drawer_username);
+        username.setText(pref.getUsername());
         // display the first navigation drawer view on app launch
         displayView(0);
     }
@@ -60,13 +75,10 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
+            mLogout.logout();
             return true;
         }
 
-        if(id == R.id.action_search){
-            Toast.makeText(getApplicationContext(), "Search action is selected!", Toast.LENGTH_SHORT).show();
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -85,11 +97,11 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 title = getString(R.string.title_all_bid);
                 break;
             case 1:
-                //fragment = new FragmentMyBid();
+                fragment = new FragmentMyBid();
                 title = getString(R.string.title_my_bid);
                 break;
             case 2:
-                //fragment = new FragmentWonBid();
+                fragment = new FragmentWonBid();
                 title = getString(R.string.title_won_bid);
                 break;
             default:

@@ -46,22 +46,26 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    //Delete all items
     public void clearItems() {
         getWritableDatabase().execSQL("DELETE FROM "+AppConfig.ITEM_TABLE+";");
     }
 
+    //Delete all bids
     public void clearBids() {
         getWritableDatabase().execSQL("DELETE FROM "+AppConfig.BID_TABLE+";");
     }
 
     //Inserting New User
-    public void insertUser(String username, String password) {
+    public long insertUser(String username, String password) {
+        long index;
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv=new ContentValues();
         cv.put(AppConfig.USERNAME, username);
         cv.put(AppConfig.PASSWORD, password);
-        db.insert(AppConfig.USER_TABLE, AppConfig.USERNAME, cv);
+        index = db.insert(AppConfig.USER_TABLE, AppConfig.USERNAME, cv);
         db.close(); // Closing database connection
+        return index;
     }
 
     //Inserting New Item
@@ -179,7 +183,7 @@ public class DBHelper extends SQLiteOpenHelper {
     //Fetch All Users from USER_TABLE
     public String[] fetchAllUsers() {
         int i = 0;
-        String[] allUsers = new String[i];
+        String[] allUsers = new String[] {};
 
         // Select All Query
         String selectQuery = "SELECT * FROM " + AppConfig.USER_TABLE;

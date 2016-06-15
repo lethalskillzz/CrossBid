@@ -3,7 +3,6 @@ package com.crossover.crossbid.fragment;
 /**
  * Created by Ibrahim on 08/06/2016.
  */
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -19,13 +18,13 @@ import com.crossover.crossbid.app.PrefManager;
 import com.crossover.crossbid.helper.DBHelper;
 import com.crossover.crossbid.model.BidItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FragmentAllBid extends Fragment {
 
     private DBHelper db;
     private PrefManager pref;
-
     private RecyclerView rView;
     private List<BidItem> bidItems;
     private BidAdapter bidAdapter;
@@ -50,6 +49,8 @@ public class FragmentAllBid extends Fragment {
 
         db = new DBHelper(getActivity());
         pref = new PrefManager(getActivity());
+
+        bidItems = new ArrayList<BidItem>();
 
         LinearLayoutManager lLayout = new LinearLayoutManager(getActivity());
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.all_bid_swipe_refresh_layout);
